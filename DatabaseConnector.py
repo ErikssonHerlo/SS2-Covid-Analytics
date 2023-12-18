@@ -119,7 +119,7 @@ class DatabaseConnector:
                         print(f'Insertando bloque {i}...')
                         batch_data = data_block[i:i + batch_size]
                         print(batch_data)
-                        # print(batch_data.values.tolist())
+                        print(batch_data.values.tolist())
                         # Ejecutar la inserción del bloque
                         cursor.executemany(sql, batch_data.values.tolist())
                         print(
