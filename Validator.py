@@ -15,7 +15,7 @@ class Validator:
         df[column_name] = pd.to_datetime(
             df[column_name], format='%m/%d/%Y', errors='coerce')
         df.dropna(subset=[column_name], inplace=True)
-        # Extraer la parte de la fecha y asignarla a la columna
+        # # Extraer la parte de la fecha y asignarla a la columna
         df[column_name] = df[column_name].dt.date
 
         # Filtrar por año
@@ -72,7 +72,7 @@ class Validator:
         # List to store columns to be deleted
         columns_to_delete = []
 
-        for column in df.columns[2:]:
+        for column in df.columns[3:]:
             try:
                 # Attempt to validate the date format
                 datetime.strptime(column, '%m/%d/%Y')
@@ -101,7 +101,7 @@ class Validator:
         """
 
         # Extract date columns for validation
-        date_columns = df.columns[2:]
+        date_columns = df.columns[3:]
 
         # Transpose DataFrame and drop duplicates
         transposed_df = df.set_index(['departamento', 'municipio']).transpose()
@@ -125,7 +125,7 @@ class Validator:
         """
 
         # Extract date columns for validation
-        date_columns = df.columns[2:]
+        date_columns = df.columns[3:]
 
         # Convert non-integer values to zero
         for col in date_columns:
@@ -151,7 +151,7 @@ class Validator:
         - pd.DataFrame: DataFrame con las fechas convertidas.
         """
         # Extract date columns for validation
-        date_columns = df.columns[2:]
+        date_columns = df.columns[3:]
 
         # Convertir todas las columnas de fecha al formato %Y-%m-%d
         for col in date_columns:

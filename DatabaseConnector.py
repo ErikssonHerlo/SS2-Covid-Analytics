@@ -55,14 +55,14 @@ class DatabaseConnector:
 
             # Iterar sobre las columnas de fecha y generar bloques de inserción
             print('Iterando sobre columnas de fecha...')
-            date_columns = df_local.columns[2:]
+            date_columns = df_local.columns[3:]
             print(f'Recorriendo Columnas de fecha')
             for date_column in date_columns:
                 try:
                     # # Obtener bloques de datos para la columna de fecha actual
                     # print(f'Obteniendo bloques de datos para {date_column}')
                     data_block = df_local[['departamento',
-                                           'municipio', date_column]]
+                                           'municipio', 'poblacion', date_column]]
                     # data_block['date'] = pd.to_datetime(data_block[date_column], errors='coerce').dt.date
                     # data_block['date'] = pd.to_datetime(data_block['date'], format='%Y-%m-%d').dt.date
 
@@ -73,7 +73,7 @@ class DatabaseConnector:
 
                     # Cambiar el nombre de las columnas para que coincidan con la estructura esperada
                     data_block = data_block.rename(
-                        columns={'departamento': 'departament', 'municipio': 'municipality'})
+                        columns={'departamento': 'departament', 'municipio': 'municipality', 'poblacion': 'population'})
 
                     print(
                         f'Insertando {len(data_block)} registros para la fecha {date_column}.')
@@ -86,7 +86,7 @@ class DatabaseConnector:
                     print("Generando Data Fake para completar la tabla")
                     # Reorganizar las columnas para que coincidan con el orden en la consulta SQL
                     data_block = data_block[[
-                        'country', 'cumulative_deaths', 'register_type', 'date', 'departament', 'municipality', 'new_deaths']]
+                        'country', 'cumulative_deaths', 'register_type', 'date', 'departament', 'municipality', 'population', 'new_deaths']]
 
                     # Agregar el segundo dataframe y rellenar los valores faltantes
                     summary_block = df_summary.rename(columns={
@@ -94,10 +94,11 @@ class DatabaseConnector:
                     # Fijar los valores constantes
                     summary_block['departament'] = 'TOTAL'
                     summary_block['municipality'] = 'TOTAL'
+                    summary_block['population'] = 17109746
                     summary_block['register_type'] = 1
 
                     summary_block = summary_block[[
-                        'country', 'cumulative_deaths', 'register_type', 'date', 'departament', 'municipality', 'new_deaths']]
+                        'country', 'cumulative_deaths', 'register_type', 'date', 'departament', 'municipality', 'population', 'new_deaths']]
                     print(summary_block)
                     data_block = pd.concat(
                         [data_block, summary_block], ignore_index=True)
@@ -108,8 +109,8 @@ class DatabaseConnector:
                     # Generar el SQL para la inserción del bloque
                     sql = """
                         INSERT INTO dataset.death
-                        (country, cumulative_deaths, register_type, date, departament, municipality, new_deaths)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        (country, cumulative_deaths, register_type, date, departament, municipality, population, new_deaths)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                     """
                     # Iniciar transacción
                     cursor.execute("START TRANSACTION;")
