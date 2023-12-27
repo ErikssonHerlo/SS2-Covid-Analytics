@@ -32,7 +32,7 @@ def validate_positive_integer(value):
         return None
 
 
-def validateSummaryFile(df, year=2021):
+def validateSummaryFile(df, year=2020):
     st.divider()
     delete_columns = ['Country_code', 'WHO_region',
                       'New_cases', 'Cumulative_cases']
@@ -48,33 +48,34 @@ def validateSummaryFile(df, year=2021):
     # 2. Filtrar por país
     df = validator.filter_by_country(df, 'Country', 'Guatemala')
     st.markdown("2. Filtrado por país: Guatemala")
+    st.write(df)
 
     # 3. Verificar formato de fecha y filtrar por año
     df = validator.check_date_format(df, 'Date_reported', year)
     st.markdown(
         "3. Verificación del formato de fecha y filtrado por año: los datos se filtraron unicamente para el año: " + str(year))
-
+    st.write(df)
     # 4. Eliminar fechas duplicadas
     df = validator.delete_duplicate_dates(df, 'Date_reported')
     st.markdown("4. Eliminación de fechas duplicadas")
-
+    st.write(df)
     # 5. Eliminar duplicados basados en dos columnas
     df = validator.check_repetition(df, 'Date_reported', 'Country')
     st.markdown(
         "5. Eliminación de duplicados basados en dos columnas: Date_reported y Country")
-
+    st.write(df)
     # 6. Verificar y limpiar columna numérica
     df = validator.check_integer(df, 'New_deaths')
     df = validator.check_integer(df, 'Cumulative_deaths')
     st.markdown(
         "6. Verificación y limpieza columnas numéricas: New_deaths y Cumulative_deaths")
-
+    st.write(df)
     # 7. Limpiar datos nulos en una columna específica
     df = validator.clean_data_by_column(df, 'New_deaths')
     df = validator.clean_data_by_column(df, 'Cumulative_deaths')
     st.markdown(
         "7. Limpieza de datos nulos en las columnas: New_deaths y Cumulative_deaths")
-
+    st.write(df)
     # 8. Eliminar valores negativos en una columna
     df = validator.check_negative_values(df, 'New_deaths')
     df = validator.check_negative_values(df, 'Cumulative_deaths')
@@ -86,30 +87,31 @@ def validateSummaryFile(df, year=2021):
 
 def validateLocalFile(df, year=2021):
     st.divider()
-    delete_columns = ['codigo_departamento', 'codigo_municipio',
-                      'poblacion']
+    delete_columns = ['codigo_departamento', 'codigo_municipio']
     # 1. Eliminar columnas
     df = validator.delete_columns(
         df, delete_columns)
-
+    st.write(df)
     st.markdown("#### Proceso de Transformación del DataFrame Local")
     st.markdown(
-        "1. Eliminación de columnas irrelevantes: 'codigo_departamento', 'codigo_municipio', 'poblacion'")
+        "1. Eliminación de columnas irrelevantes: 'codigo_departamento', 'codigo_municipio'")
     # 2. Verificar formato de fecha y filtrar por año
     df = validator.validate_and_clean_dates(df, year)
+    st.write(df)
     st.markdown(
         "2. Verificación del formato de fecha y filtrado por año: los datos se filtraron unicamente para el año: " + str(year))
     # 3. Eliminar fechas duplicadas
     df = validator.remove_duplicate_dates_in_columns(df)
     st.markdown("3. Eliminación de fechas duplicadas")
-
+    st.write(df)
     # 5. Eliminar duplicados basados en dos columnas
     df = validator.check_repetition(df, 'departamento', 'municipio')
     st.markdown(
         "5. Eliminación de duplicados basados en dos columnas: 'departamento' y 'municipio'")
-
+    st.write(df)
     # 6. Verificar y limpiar los datos numericos
     df = validator.check_numeric_values_column(df)
+    st.write(df)
     st.markdown(
         "6. Verificación y limpieza de datos numericos en cada fecha")
     st.markdown(
@@ -134,37 +136,37 @@ st.subheader("Carga del Archivo")
 st.write("""
 Para realizar el ETL, es necesario cargar un archivo de datos y otro mediante una URL, con un formato específico. Este debe ser un formato csv.
 """)
-urlFile = st.text_input("Ingrese la URL del archivo Global a Analizar", "https://seminario2.blob.core.windows.net/fase1/global.csv?sp=r&st=2023-12-06T03:45:26Z&se=2024-01-04T11:45:26Z&sv=2022-11-02&sr=b&sig=xdx7LdUOekGyBvGL%2FNE55ZZj9SBvCC%2FWegxtpSsKjJg%3D",
-                        placeholder="Debe ser un archivo en formato csv")
-uploadFile = st.file_uploader("Elija un archivo", type=[
-                              'csv', 'xls', 'xlsx', 'json'])
+# urlFile = st.text_input("Ingrese la URL del archivo Global a Analizar", "https://seminario2.blob.core.windows.net/fase1/global.csv?sp=r&st=2023-12-06T03:45:26Z&se=2024-01-04T11:45:26Z&sv=2022-11-02&sr=b&sig=xdx7LdUOekGyBvGL%2FNE55ZZj9SBvCC%2FWegxtpSsKjJg%3D",placeholder="Debe ser un archivo en formato csv")
+# uploadFile = st.file_uploader("Elija un archivo", type=['csv', 'xls', 'xlsx', 'json'])
 
 # Obtiene la ruta del directorio actual (donde se encuentra app.py)
 directorio_actual = os.path.dirname(__file__)
 
 # Combina la ruta del directorio actual con la ubicación del archivo CSV
-# uploadFile = os.path.join(directorio_actual, "municipio.csv")
+uploadFile = os.path.join(directorio_actual, "municipio-calificacion.csv")
+uploadFile2 = os.path.join(directorio_actual, "global-calificacion.csv")
 
 
-if (uploadFile is not None and urlFile != ""):
+if (uploadFile is not None and uploadFile2 is not None):
 
     # Descargar el archivo CSV desde la URL
-    response = requests.get(urlFile)
-    if response.status_code == 200:
-        summaryFile = StringIO(response.content.decode('utf-8'))
-        df_summary = pd.read_csv(summaryFile)
-    else:
-        st.error("Error al descargar el archivo")
-        st.stop()
+    # response = requests.get(urlFile)
+    # if response.status_code == 200:
+    #     summaryFile = StringIO(response.content.decode('utf-8'))
+    #     df_summary = pd.read_csv(summaryFile)
+    # else:
+    #     st.error("Error al descargar el archivo")
+    #     st.stop()
 
-    splitNameLocal = os.path.splitext(uploadFile.name)
+    # splitNameLocal = os.path.splitext(uploadFile.name)
 
-    fileNameLocal = splitNameLocal[0]
-    fileExtensionLocal = splitNameLocal[1]
+    # fileNameLocal = splitNameLocal[0]
+    # fileExtensionLocal = splitNameLocal[1]
 
     # Verificamos la extension del Archivo, para su lectura correspondiente
-    if (fileExtensionLocal == ".csv"):
-        df_local = pd.read_csv(uploadFile)
+    # if (fileExtensionLocal == ".csv" and fileExtensionGlobal == ".csv"):
+    df_local = pd.read_csv(uploadFile)
+    df_summary = pd.read_csv(uploadFile2)
 
     # Imprimimos el contenido de la tabla
     st.subheader("Extracción de Datos")

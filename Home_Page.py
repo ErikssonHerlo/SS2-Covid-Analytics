@@ -137,6 +137,7 @@ CREATE TABLE IF NOT EXISTS `dataset`.`death` (
   `country` VARCHAR(45) NULL,
   `departament` VARCHAR(45) NULL,
   `municipality` VARCHAR(45) NULL,
+  `population` INT NULL,
   `new_deaths` INT NULL,
   `cumulative_deaths` INT NULL,
   `register_type` ENUM('summary', 'municipality') NOT NULL,
